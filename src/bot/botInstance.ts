@@ -19,7 +19,7 @@ class BotInstance {
     email: string,
     products: OrderProduct[]
   ) => {
-    const msg = `Customer with name ${name}, phone ${phone}, email ${email} ordered the following products: ${products}`
+    const msg = `Customer with name ${name}, phone ${phone}, email ${email} ordered the following products:\n ${JSON.stringify(products,null,'\t')}`
     await this.bot.telegram.sendMessage(-1001951644285, msg);
     return;
   };
