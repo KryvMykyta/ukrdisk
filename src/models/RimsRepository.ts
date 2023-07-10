@@ -1,6 +1,6 @@
 import { db } from "@/libs/rimsDb";
-import { carMaker, carModel, rimConfigs } from "@/schemas/schemas";
-import { and, eq, inArray } from "drizzle-orm";
+import { carMaker, carModel, items, rimConfigs, rims } from "@/schemas/schemas";
+import { and, eq, inArray, desc } from "drizzle-orm";
 
 export class RimsRepository {
   public static getModelYears = async (modelId: number) => {
@@ -23,11 +23,47 @@ export class RimsRepository {
     return models;
   };
 
-  public static getRims = async (pcd: string, diameters: string[]) => {
-    const rims = await db
-      .select()
+  public static getRims = async (
+    pcd?: string,
+    diameters?: string[],
+    brand?: string,
+    sort?: string
+  ) => {
+    const rimsData = db
+      .select({
+        id: rims.id,
+        images: rims.images,
+        price: rimConfigs.priceUsd,
+        brandName: rims.brandName,
+        modelName: rims.name,
+        nameSuffix: rims.nameSuffix,
+        thumbnail: rims.thumbnail,
+        diameter: rimConfigs.d,
+        width: rimConfigs.w,
+      })
       .from(rimConfigs)
-      .where(and(eq(rimConfigs.pcd, pcd), inArray(rimConfigs.d, diameters)));
-    return rims;
+      .innerJoin(rims, eq(rimConfigs.rimId, rims.id))
+    if(pcd && diameters) {
+      rimsData.where(and(eq(rimConfigs.pcd, pcd), inArray(rimConfigs.d, diameters)));
+    }
+    if (brand) {
+      rimsData.where(eq(rims.brandName, brand));
+    }
+    if (sort && sort === "POPULAR") {
+      rimsData
+        .innerJoin(items, eq(items.id, rims.id))
+        .orderBy(desc(items.visitsCount));
+    }
+    return rimsData;
+  };
+
+  public static getMakers = async () => {
+    const makers = await db
+      .select({
+        maker: carMaker.name,
+        makerId: carMaker.id,
+      })
+      .from(carMaker);
+    return makers;
   };
 }

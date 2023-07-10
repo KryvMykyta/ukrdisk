@@ -6,5 +6,6 @@ declare namespace NodeJS {
     PGPASSWORD:string,
     ENDPOINT_ID:string,
     CONN_URL:string,
+    BOT_TOKEN: string
   }
 }

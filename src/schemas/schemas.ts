@@ -75,7 +75,7 @@ export const rims = pgTable("rims", {
   id: bigint("id", { mode: "number" }).notNull(),
   brandName: char("brand_name", { length: 256 }),
   color: char("color", { length: 256 }),
-  images: jsonb("images"),
+  images: jsonb("images").$type<string[]>(),
   name: char("name", { length: 256 }),
   nameSuffix: char("name_suffix", { length: 256 }),
   thumbnail: char("thumbnail", { length: 256 }),

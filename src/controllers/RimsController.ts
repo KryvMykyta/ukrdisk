@@ -23,12 +23,18 @@ export class RimsController {
   };
 
   public getRims = async (
-    req: Request<{}, {}, {}, { pcd: string, diameters: string }>,
+    req: Request<{}, {}, {}, { pcd?: string, diameters?: string, brand?:string, sort?:string }>,
     res: Response
   ) => {
-    const {pcd, diameters} = req.query;
-    const diametersArray = diameters.split(',');
-    const rims = await RimsRepository.getRims(pcd, diametersArray);
-    return res.status(200).send(rims);
+    const {pcd, diameters, brand, sort} = req.query;
+    const diametersArray = diameters ? diameters.split(',') : undefined
+    const rims = await RimsRepository.getRims(pcd, diametersArray, brand, sort);
+    const grouppedRims = DataFormatter.groupRims(rims)
+    return res.status(200).send(grouppedRims);
   };
+
+  public getMakers = async (req: Request, res: Response) => {
+    const makers = await RimsRepository.getMakers();
+    return res.status(200).send(makers);
+  }
 }

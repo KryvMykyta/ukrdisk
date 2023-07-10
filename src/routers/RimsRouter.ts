@@ -11,6 +11,7 @@ export class CarChooseRouter {
     this.controller = new RimsController();
     this.router.get('/models',this.controller.getMarkModels)
     this.router.get('/years',this.controller.getModelYears)
-    this.router.get('/rims',this.controller.getRims)
+    this.router.get('/',this.controller.getRims)
+    this.router.get('/makers',this.controller.getMakers)
   }
 }
