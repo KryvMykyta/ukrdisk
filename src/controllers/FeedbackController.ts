@@ -27,14 +27,14 @@ export class FeedbackController {
       {},
       {
         question: string;
-        email?: string;
         phone: string;
+        email?: string;
       }
     >,
     res: Response
   ) => {
     const { question, email, phone } = req.body;
-    await botInstance.sendQuestion(question, email, phone);
+    await botInstance.sendQuestion(question, phone, email);
     return res.status(200).send();
   };
 
