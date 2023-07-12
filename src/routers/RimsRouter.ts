@@ -13,5 +13,6 @@ export class CarChooseRouter {
     this.router.get('/years',this.controller.getModelYears)
     this.router.get('/',this.controller.getRims)
     this.router.get('/makers',this.controller.getMakers)
+    this.router.get('/rim',this.controller.getRim)
   }
 }

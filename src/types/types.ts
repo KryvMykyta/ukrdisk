@@ -2,12 +2,12 @@ import { Context, NarrowedContext } from "telegraf";
 import { Update, Message } from "telegraf/typings/core/types/typegram";
 
 export type OrderProduct = {
-  productName: string,
-  productId: string,
-  productPrice: number,
-  totalPrice: number,
-  amount: number
-}
+  productName: string;
+  productId: string;
+  productPrice: number;
+  totalPrice: number;
+  amount: number;
+};
 
 export type ModelData = {
   id: number;
@@ -41,7 +41,7 @@ export type RimsInfo = {
   thumbnail: string | null;
   diameter: string | null;
   width: string | null;
-}
+};
 
 export type GrouppedRims = {
   id: number;
@@ -55,15 +55,14 @@ export type GrouppedRims = {
     width: string | null;
     price: number | null;
   }[];
-  priceToShow: number
+  priceToShow: number;
 };
 
 export type RimConfig = {
-  width:string | null,
-  diameter: string | null,
-  price: number | null
-}
-
+  width: string | null;
+  diameter: string | null;
+  price: number | null;
+};
 
 export type ContextType = NarrowedContext<
   Context<Update>,
@@ -72,3 +71,17 @@ export type ContextType = NarrowedContext<
     update_id: number;
   }
 >;
+
+export type RimItem = {
+  id: number;
+  images: string[] | null;
+  brandName: string | null;
+  modelName: string | null;
+  nameSuffix: string | null;
+  thumbnail: string | null;
+  configId: number;
+  diameter: string | null;
+  price: number | null;
+  width: string | null;
+  pcd: string | null;
+}

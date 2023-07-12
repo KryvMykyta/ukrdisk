@@ -1,4 +1,4 @@
-import { GrouppedRims, ModelData, RimConfig, RimsInfo } from "@/types/types";
+import { GrouppedRims, ModelData, RimConfig, RimItem, RimsInfo } from "@/types/types";
 
 export class DataFormatter {
   public static formatYears = (modelData: ModelData) => {
@@ -46,6 +46,31 @@ export class DataFormatter {
       })
     })
     return grouppedRims
+  }
+
+  public static groupRimConfigs = (rim: RimItem[]) => {
+    const pcd: string[] = []
+    const configs = rim.map(item => {
+      if(item.pcd){
+        pcd.push(...item.pcd.split("/"))
+      }
+      return {
+        id: item.configId,
+        diameter: item.diameter,
+        price: item.price,
+        width: item.width,
+      }
+    })
+    return {
+      id: rim[0].id,
+      images: rim[0].images,
+      brandName: rim[0].brandName,
+      modelName: rim[0].modelName,
+      nameSuffix: rim[0].nameSuffix,
+      thumbnail: rim[0].thumbnail,
+      pcd,
+      configs
+    }
   }
 
 }

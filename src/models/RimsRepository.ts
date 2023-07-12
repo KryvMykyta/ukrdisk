@@ -1,6 +1,7 @@
 import { db } from "@/libs/rimsDb";
 import { carMaker, carModel, items, rimConfigs, rims } from "@/schemas/schemas";
-import { and, eq, inArray, desc } from "drizzle-orm";
+import { RimItem } from "@/types/types";
+import { and, eq, inArray, desc, sql } from "drizzle-orm";
 
 export class RimsRepository {
   public static getModelYears = async (modelId: number) => {
@@ -66,4 +67,25 @@ export class RimsRepository {
       .from(carMaker);
     return makers;
   };
+
+  public static getRim = async (id: number): Promise<RimItem[]> => {
+    const rimsData = await db
+      .select({
+        id: rims.id,
+        images: rims.images,
+        brandName: rims.brandName,
+        modelName: rims.name,
+        nameSuffix: rims.nameSuffix,
+        thumbnail: rims.thumbnail,
+        configId: rimConfigs.id,
+        diameter: rimConfigs.d,
+        price: rimConfigs.priceUsd,
+        width: rimConfigs.w,
+        pcd: rimConfigs.pcd,
+      })
+      .from(rimConfigs)
+      .innerJoin(rims, eq(rimConfigs.rimId, rims.id))
+      .where(eq(rimConfigs.rimId, id))
+    return rimsData;
+  }
 }
