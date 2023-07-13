@@ -76,4 +76,17 @@ export class RimsController {
       return res.status(500).send(e);
     }
   };
+
+  public getRimsSearch = async (
+    req: Request<{}, {}, {}, { substring: string }>,
+    res: Response
+  ) => {
+    try {
+      const rim = await RimsRepository.getRimSearch(req.query.substring);
+      // const rimResponse = DataFormatter.groupRimConfigs(rim);
+      return res.status(200).send(rim);
+    } catch (e) {
+      return res.status(500).send(e);
+    }
+  };
 }

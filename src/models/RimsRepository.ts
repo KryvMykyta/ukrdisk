@@ -1,7 +1,17 @@
 import { db } from "@/libs/rimsDb";
 import { carMaker, carModel, items, rimConfigs, rims } from "@/schemas/schemas";
 import { RimItem } from "@/types/types";
-import { and, eq, inArray, desc, sql } from "drizzle-orm";
+import { v4 as uuidv4 } from 'uuid';
+import {
+  and,
+  eq,
+  inArray,
+  desc,
+  ilike,
+  sql,
+  or,
+  placeholder,
+} from "drizzle-orm";
 
 export class RimsRepository {
   public static getModelYears = async (modelId: number) => {
@@ -43,9 +53,11 @@ export class RimsRepository {
         width: rimConfigs.w,
       })
       .from(rimConfigs)
-      .innerJoin(rims, eq(rimConfigs.rimId, rims.id))
-    if(pcd && diameters) {
-      rimsData.where(and(eq(rimConfigs.pcd, pcd), inArray(rimConfigs.d, diameters)));
+      .innerJoin(rims, eq(rimConfigs.rimId, rims.id));
+    if (pcd && diameters) {
+      rimsData.where(
+        and(eq(rimConfigs.pcd, pcd), inArray(rimConfigs.d, diameters))
+      );
     }
     if (brand) {
       rimsData.where(eq(rims.brandName, brand));
@@ -85,7 +97,40 @@ export class RimsRepository {
       })
       .from(rimConfigs)
       .innerJoin(rims, eq(rimConfigs.rimId, rims.id))
-      .where(eq(rimConfigs.rimId, id))
+      .where(eq(rimConfigs.rimId, id));
     return rimsData;
-  }
+  };
+
+  public static getRimSearch = async (substring: string) => {
+    // const rimsData = await db.select({
+    //   id: rims.id,
+    //   minPrice: sql`MIN(${rimConfigs.priceUsd})`,
+    //   thumbnail: rims.thumbnail,
+    // })
+    // .from(rims)
+    // .innerJoin(rimConfigs, eq(rimConfigs.rimId, rims.id))
+    // .where(or(ilike(rims.name, `%${substring.toUpperCase()}%`), ilike(rims.nameSuffix, `%${substring.toUpperCase()}%`)))
+    // .groupBy(rims.id)
+
+    const substringLower = `%${substring.toLowerCase()}%`;
+
+    const rimsQuery = db
+      .select({
+        id: rims.id,
+        minPrice: sql`MIN(${rimConfigs.priceUsd})`,
+        thumbnail: rims.thumbnail,
+      })
+      .from(rims)
+      .innerJoin(rimConfigs, eq(rimConfigs.rimId, rims.id))
+      .where(
+        sql`lower(concat(${rims.name}, ' ', ${
+          rims.nameSuffix
+        })) ilike ${placeholder("substringLower")}`
+      )
+      .groupBy(rims.id)
+      .prepare(uuidv4());
+
+    const rimsData = await rimsQuery.execute({ substringLower });
+    return rimsData;
+  };
 }

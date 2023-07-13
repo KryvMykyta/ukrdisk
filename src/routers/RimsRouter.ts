@@ -14,5 +14,6 @@ export class CarChooseRouter {
     this.router.get('/',this.controller.getRims)
     this.router.get('/makers',this.controller.getMakers)
     this.router.get('/rim',this.controller.getRim)
+    this.router.get('/search',this.controller.getRimsSearch)
   }
 }
