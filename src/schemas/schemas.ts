@@ -1,5 +1,5 @@
 import { ModelYearInfo } from "@/types/types";
-import { InferModel } from "drizzle-orm";
+import { InferModel, relations } from "drizzle-orm";
 import {
   bigint,
   char,
