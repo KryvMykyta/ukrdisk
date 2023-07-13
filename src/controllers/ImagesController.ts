@@ -8,10 +8,8 @@ export class ImagesController {
     try{
         const { path: imgPath } = req.params;
         const pathArray = imgPath.split("/")
-        if (pathArray.length !== 1){
-          return res.status(200).sendFile(path.resolve(`./images/${pathArray[1]}`));
-        }
-        return res.status(200).sendFile(path.resolve(`./images/${imgPath}`));
+        const fileName = pathArray.length !== 1 ? pathArray[1].split(".") : imgPath.split(".")
+        return res.status(200).sendFile(path.resolve(`./images/${fileName[0]+"."+fileName[1].toLowerCase()}`));
 
     }
     catch(e) {
