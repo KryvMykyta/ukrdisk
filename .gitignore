@@ -1,3 +1,6 @@
 dist
 node_modules
 .env
+images2
+images3
+src/imagesParser.ts
