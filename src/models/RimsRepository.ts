@@ -1,7 +1,7 @@
 import { db } from "@/libs/rimsDb";
 import { carMaker, carModel, items, rimConfigs, rims } from "@/schemas/schemas";
 import { RimItem } from "@/types/types";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import {
   and,
   eq,
@@ -112,25 +112,27 @@ export class RimsRepository {
     // .where(or(ilike(rims.name, `%${substring.toUpperCase()}%`), ilike(rims.nameSuffix, `%${substring.toUpperCase()}%`)))
     // .groupBy(rims.id)
 
-    const substringLower = `%${substring.toLowerCase()}%`;
+    const substringLower = `${substring.toLowerCase()}`;
+    const transformedSubstring = substringLower.replace(/ /g, "");
 
     const rimsQuery = db
       .select({
         id: rims.id,
+        name: sql`concat(${rims.name}, ' ', ${rims.nameSuffix})`,
         minPrice: sql`MIN(${rimConfigs.priceUsd})`,
         thumbnail: rims.thumbnail,
       })
       .from(rims)
       .innerJoin(rimConfigs, eq(rimConfigs.rimId, rims.id))
       .where(
-        sql`lower(concat(${rims.name}, ' ', ${
+        sql`lower(concat(${rims.name}, ${
           rims.nameSuffix
-        })) ilike ${placeholder("substringLower")}`
+        })) ~* ${placeholder("transformedSubstring")}`
       )
       .groupBy(rims.id)
       .prepare(uuidv4());
 
-    const rimsData = await rimsQuery.execute({ substringLower });
+    const rimsData = await rimsQuery.execute({ transformedSubstring });
     return rimsData;
   };
 }
